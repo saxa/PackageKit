@@ -360,7 +360,7 @@ class PackageKitYumBackend(PackageKitBaseBackend, PackagekitPackage):
 
                 # if it's us, kill it as it's from another instance where the daemon crashed
                 if cmdline.find("yumBackend.py") != -1:
-                    self.message(MESSAGE_BACKEND_ERROR, "killing pid %i, as old instance" % e.pid)
+                    self.message('BACKEND_ERROR', "killing pid %i, as old instance" % e.pid)
                     os.kill(e.pid, signal.SIGQUIT)
 
                 # wait a little time, and try again
@@ -1090,7 +1090,7 @@ class PackageKitYumBackend(PackageKitBaseBackend, PackagekitPackage):
                 return
             # if we couldn't map package_id -> pkg
             if not pkg:
-                self.message(MESSAGE_COULD_NOT_FIND_PACKAGE, "Could not find the package %s" % package_id)
+                self.message('COULD_NOT_FIND_PACKAGE', "Could not find the package %s" % package_id)
                 continue
 
             n, a, e, v, r = pkg.pkgtup
@@ -1106,7 +1106,7 @@ class PackageKitYumBackend(PackageKitBaseBackend, PackagekitPackage):
 
             # if we couldn't map package_id -> pkg
             if len(packs) == 0:
-                self.message(MESSAGE_COULD_NOT_FIND_PACKAGE, "Could not find a match for package %s" % package_id)
+                self.message('COULD_NOT_FIND_PACKAGE', "Could not find a match for package %s" % package_id)
                 continue
 
             # choose the first entry, as the same NEVRA package in multiple repos is fine
@@ -1250,7 +1250,7 @@ class PackageKitYumBackend(PackageKitBaseBackend, PackagekitPackage):
 
         # multiple entries
         if len(pkgs) > 1:
-            self.message(MESSAGE_COULD_NOT_FIND_PACKAGE, "more than one package match for %s" % _format_package_id(package_id))
+            self.message('COULD_NOT_FIND_PACKAGE', "more than one package match for %s" % _format_package_id(package_id))
 
         # return first entry
         return pkgs[0], False
@@ -1294,7 +1294,7 @@ class PackageKitYumBackend(PackageKitBaseBackend, PackagekitPackage):
                     pkg, inst = self._findPackage(package_id)
                 except PkError, e:
                     if e.code == ERROR_PACKAGE_NOT_FOUND:
-                        self.message(MESSAGE_COULD_NOT_FIND_PACKAGE, e.details)
+                        self.message('COULD_NOT_FIND_PACKAGE', e.details)
                         continue
                     self.error(e.code, e.details, exit=True)
                     return
@@ -1667,7 +1667,7 @@ class PackageKitYumBackend(PackageKitBaseBackend, PackagekitPackage):
                     pkg, inst = self._findPackage(package_id)
                 except PkError, e:
                     if e.code == ERROR_PACKAGE_NOT_FOUND:
-                        self.message(MESSAGE_COULD_NOT_FIND_PACKAGE, e.details)
+                        self.message('COULD_NOT_FIND_PACKAGE', e.details)
                         continue
                     self.error(e.code, e.details, exit=True)
                     return
@@ -1986,7 +1986,7 @@ class PackageKitYumBackend(PackageKitBaseBackend, PackagekitPackage):
         if pkgs:
             newest = pkgs[0]
             if newest.EVR > po.EVR:
-                self.message(MESSAGE_NEWER_PACKAGE_EXISTS, "A newer version of %s is available online." % po.name)
+                self.message('NEWER_PACKAGE_EXISTS', "A newer version of %s is available online." % po.name)
 
     def install_files(self, transaction_flags, inst_files):
         '''
@@ -2076,11 +2076,11 @@ class PackageKitYumBackend(PackageKitBaseBackend, PackagekitPackage):
                     else:
                         # trying to install package that already exists
                         if len(pkgs_local) == 1 and pkgs_local[0].EVR == pkg.EVR:
-                            self.message(MESSAGE_PACKAGE_ALREADY_INSTALLED, '%s is already installed and the latest version' % pkg.name)
+                            self.message('PACKAGE_ALREADY_INSTALLED', '%s is already installed and the latest version' % pkg.name)
 
                         # trying to install package older than already exists
                         elif len(pkgs_local) == 1 and pkgs_local[0].EVR > pkg.EVR:
-                            self.message(MESSAGE_PACKAGE_ALREADY_INSTALLED, 'a newer version of %s is already installed' % pkg.name)
+                            self.message('PACKAGE_ALREADY_INSTALLED', 'a newer version of %s is already installed' % pkg.name)
 
                         # only update if installed
                         elif packtype == 'update':
@@ -2250,7 +2250,7 @@ class PackageKitYumBackend(PackageKitBaseBackend, PackagekitPackage):
                     pkg, inst = self._findPackage(package_id)
                 except PkError, e:
                     if e.code == ERROR_PACKAGE_NOT_FOUND:
-                        self.message(MESSAGE_COULD_NOT_FIND_PACKAGE, e.details)
+                        self.message('COULD_NOT_FIND_PACKAGE', e.details)
                         package_ids.remove(package_id)
                         continue
                     self.error(e.code, e.details, exit=True)
@@ -2263,7 +2263,7 @@ class PackageKitYumBackend(PackageKitBaseBackend, PackagekitPackage):
                     except Exception, e:
                         self.error(ERROR_INTERNAL_ERROR, _format_str(traceback.format_exc()))
                     if not txmbr:
-                        self.message(MESSAGE_COULD_NOT_FIND_PACKAGE, "could not add package update for %s: %s" % (_format_package_id(package_id), pkg))
+                        self.message('COULD_NOT_FIND_PACKAGE', "could not add package update for %s: %s" % (_format_package_id(package_id), pkg))
                     else:
                         txmbrs.extend(txmbr)
         except yum.Errors.RepoError, e:
@@ -2436,7 +2436,7 @@ class PackageKitYumBackend(PackageKitBaseBackend, PackagekitPackage):
         self.status(STATUS_RUNNING)
 
         if autoremove:
-            self.message(MESSAGE_PARAMETER_INVALID, "the yum backend does not support autoremove")
+            self.message('PARAMETER_INVALID', "the yum backend does not support autoremove")
 
         txmbrs = []
         for package_id in package_ids:
@@ -2536,14 +2536,14 @@ class PackageKitYumBackend(PackageKitBaseBackend, PackagekitPackage):
                     pkg, inst = self._findPackage(package_id)
                 except PkError, e:
                     if e.code == ERROR_PACKAGE_NOT_FOUND:
-                        self.message(MESSAGE_COULD_NOT_FIND_PACKAGE, e.details)
+                        self.message('COULD_NOT_FIND_PACKAGE', e.details)
                         continue
                     self.error(e.code, e.details, exit=True)
                     return
                 if pkg:
                     self._show_details_pkg(pkg)
                 else:
-                    self.message(MESSAGE_COULD_NOT_FIND_PACKAGE, 'Package %s was not found' % _format_package_id(package_id))
+                    self.message('COULD_NOT_FIND_PACKAGE', 'Package %s was not found' % _format_package_id(package_id))
                     continue
 
     def _show_details_pkg(self, pkg):
@@ -2677,7 +2677,7 @@ class PackageKitYumBackend(PackageKitBaseBackend, PackagekitPackage):
         elif ut == 'newpackage':
             return INFO_ENHANCEMENT
         else:
-            self.message(MESSAGE_BACKEND_ERROR, "status unrecognised, please report in bugzilla: %s" % ut)
+            self.message('BACKEND_ERROR', "status unrecognised, please report in bugzilla: %s" % ut)
             return INFO_NORMAL
 
     def get_updates(self, filters):
@@ -2784,7 +2784,7 @@ class PackageKitYumBackend(PackageKitBaseBackend, PackagekitPackage):
                                   "Please use these packages if you want to work with the " \
                                   "Fedora developers by testing these new development packages.\n\n" \
                                   "If this is not correct, please disable the %s software source." % repoid
-                        self.message(MESSAGE_REPO_FOR_DEVELOPERS_ONLY, warning.replace("\n", ";"))
+                        self.message('REPO_FOR_DEVELOPERS_ONLY', warning.replace("\n", ";"))
         except yum.Errors.RepoError, e:
             self.error(ERROR_REPO_NOT_FOUND, _to_unicode(e))
         except exceptions.IOError, e:
@@ -2932,12 +2932,12 @@ class PackageKitYumBackend(PackageKitBaseBackend, PackagekitPackage):
                 pkg, inst = self._findPackage(package_id)
             except PkError, e:
                 if e.code == ERROR_PACKAGE_NOT_FOUND:
-                    self.message(MESSAGE_COULD_NOT_FIND_PACKAGE, e.details)
+                    self.message('COULD_NOT_FIND_PACKAGE', e.details)
                     continue
                 self.error(e.code, e.details, exit=True)
                 return
             if pkg == None:
-                self.message(MESSAGE_COULD_NOT_FIND_PACKAGE, "could not find %s" % _format_package_id(package_id))
+                self.message('COULD_NOT_FIND_PACKAGE', "could not find %s" % _format_package_id(package_id))
                 continue
             update = self._get_updated(pkg)
             obsolete = self._get_obsoleted(pkg.name)
@@ -3112,13 +3112,13 @@ class PackageKitYumBackend(PackageKitBaseBackend, PackagekitPackage):
                     root = self.yumbase._media_find_root(repo.mediaid)
                     if not root:
                         self.yumbase.repos.disableRepo(repo.id)
-                        self.message(MESSAGE_REPO_METADATA_DOWNLOAD_FAILED,
+                        self.message('REPO_METADATA_DOWNLOAD_FAILED',
                                      "Could not contact media source '%s', so it will be disabled" % repo.id)
             except exceptions.IOError, e:
                 self.error(ERROR_NO_SPACE_ON_DEVICE, "Disk error: %s" % _to_unicode(e))
             except yum.Errors.RepoError, e:
                 self.yumbase.repos.disableRepo(repo.id)
-                self.message(MESSAGE_REPO_METADATA_DOWNLOAD_FAILED, "Could not contact source '%s', so it will be disabled" % repo.id)
+                self.message('REPO_METADATA_DOWNLOAD_FAILED', "Could not contact source '%s', so it will be disabled" % repo.id)
 
         # should we suggest yum-complete-transaction?
         unfinished = yum.misc.find_unfinished_transactions(yumlibpath=self.yumbase.conf.persistdir)
